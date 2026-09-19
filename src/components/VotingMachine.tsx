@@ -3,11 +3,10 @@
 import React, { useState, useEffect } from "react";
 import { VotingDisplay } from "./VotingDisplay";
 import { NumericKeypad } from "./NumericKeypad";
-import { DemoMode } from "./DemoMode";
 import { RotatePhonePrompt } from "./RotatePhonePrompt";
 import { useVotingMachine } from "@/hooks/useVotingMachine";
 import { MachineConfig } from "@/data/candidates";
-import { Volume2, VolumeX, Settings } from "lucide-react";
+import { Volume2, VolumeX, Settings, Play, X, RotateCcw } from "lucide-react";
 import Link from "next/link";
 
 interface VotingMachineProps {
@@ -21,7 +20,7 @@ export const VotingMachine: React.FC<VotingMachineProps> = ({
 }) => {
   const [isPortrait, setIsPortrait] = useState(false);
   const [dismissRotate, setDismissRotate] = useState(false);
-  const [showControls, setShowControls] = useState(false);
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   // Detecção de orientação do celular
   useEffect(() => {
@@ -61,69 +60,107 @@ export const VotingMachine: React.FC<VotingMachineProps> = ({
   } = useVotingMachine({ config });
 
   return (
-    <div className="h-[100dvh] max-h-[100dvh] w-screen bg-[#0b0f17] text-slate-100 flex flex-col justify-between p-1.5 sm:p-2 md:p-3 select-none overflow-hidden relative">
+    <div className="h-[100dvh] max-h-[100dvh] w-screen bg-[#0e131b] text-slate-100 flex flex-col justify-center p-2 sm:p-3 md:p-4 select-none overflow-hidden relative">
       {/* Alerta quando o celular estiver em pé na vertical */}
       {isPortrait && !dismissRotate && (
         <RotatePhonePrompt onDismiss={() => setDismissRotate(true)} />
       )}
 
-      {/* Barra de Controles Discreta no Topo (Compacta para não roubar altura) */}
-      <header className="w-full max-w-[1100px] mx-auto h-6 sm:h-7 shrink-0 flex items-center justify-between px-1 text-xs">
-        <div className="flex items-center gap-1.5">
-          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase truncate">
-            Simulador Urna 2026
-          </span>
-        </div>
+      {/* Menu Modal Discreto acionado pelo botão voltar da Foto 2 */}
+      {isMenuOpen && (
+        <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 max-w-sm w-full shadow-2xl space-y-4">
+            <div className="flex items-center justify-between border-b border-slate-800 pb-3">
+              <h3 className="font-bold text-white text-sm">Opções do Simulador</h3>
+              <button
+                type="button"
+                onClick={() => setIsMenuOpen(false)}
+                className="p-1 rounded-full text-slate-400 hover:text-white"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
 
-        <div className="flex items-center gap-1.5">
-          <button
-            type="button"
-            onClick={() => setShowControls((prev) => !prev)}
-            className="px-2 py-0.5 rounded-md bg-slate-800/90 hover:bg-slate-700 text-slate-300 text-[10px] sm:text-[11px] font-semibold border border-slate-700/60 transition-all"
-          >
-            {showControls ? "Ocultar Demo" : "▶ Modo Demo"}
-          </button>
+            {/* Controle da Demonstração */}
+            <div className="space-y-2">
+              <span className="text-xs font-semibold text-slate-400 block">Modo Demonstração:</span>
+              <div className="flex items-center gap-1.5">
+                {(["slow", "normal", "fast"] as const).map((spd) => (
+                  <button
+                    key={spd}
+                    type="button"
+                    onClick={() => onUpdateConfig({ demoSpeed: spd })}
+                    className={`flex-1 py-1 text-xs rounded-lg font-bold border transition-all ${
+                      config.demoSpeed === spd
+                        ? "bg-blue-600 text-white border-blue-500"
+                        : "bg-slate-800 text-slate-400 border-slate-700"
+                    }`}
+                  >
+                    {spd === "slow" ? "Lenta" : spd === "normal" ? "Normal" : "Rápida"}
+                  </button>
+                ))}
+              </div>
 
-          <button
-            type="button"
-            onClick={() => onUpdateConfig({ soundEnabled: !config.soundEnabled })}
-            className="p-1 rounded-md bg-slate-800/90 hover:bg-slate-700 text-slate-300 border border-slate-700/60 transition-all"
-            title={config.soundEnabled ? "Som Ligado" : "Som Desligado"}
-          >
-            {config.soundEnabled ? (
-              <Volume2 className="w-3.5 h-3.5 text-emerald-400" />
-            ) : (
-              <VolumeX className="w-3.5 h-3.5 text-slate-400" />
-            )}
-          </button>
+              <button
+                type="button"
+                onClick={() => {
+                  setIsMenuOpen(false);
+                  startDemo();
+                }}
+                className="w-full py-2 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs flex items-center justify-center gap-2 shadow"
+              >
+                <Play className="w-3.5 h-3.5 fill-current" />
+                <span>INICIAR DEMONSTRAÇÃO</span>
+              </button>
+            </div>
 
-          <Link
-            href="/config"
-            className="p-1 rounded-md bg-slate-800/90 hover:bg-slate-700 text-slate-300 border border-slate-700/60 transition-all"
-            title="Configurações"
-          >
-            <Settings className="w-3.5 h-3.5" />
-          </Link>
-        </div>
-      </header>
+            {/* Som e Configurações */}
+            <div className="pt-2 border-t border-slate-800 flex gap-2">
+              <button
+                type="button"
+                onClick={() => onUpdateConfig({ soundEnabled: !config.soundEnabled })}
+                className="flex-1 py-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-xs font-semibold flex items-center justify-center gap-1.5 text-slate-200"
+              >
+                {config.soundEnabled ? (
+                  <>
+                    <Volume2 className="w-4 h-4 text-emerald-400" />
+                    <span>Som: Ativo</span>
+                  </>
+                ) : (
+                  <>
+                    <VolumeX className="w-4 h-4 text-slate-400" />
+                    <span>Som: Mudo</span>
+                  </>
+                )}
+              </button>
 
-      {/* Painel de Demonstração quando aberto */}
-      {showControls && (
-        <div className="w-full max-w-[1100px] mx-auto mb-1 shrink-0 animate-fadeIn">
-          <DemoMode
-            isRunning={isDemoRunning}
-            onStart={startDemo}
-            onStop={stopDemo}
-            currentSpeed={config.demoSpeed}
-            onSpeedChange={(spd) => onUpdateConfig({ demoSpeed: spd })}
-          />
+              <button
+                type="button"
+                onClick={() => {
+                  handleReset();
+                  setIsMenuOpen(false);
+                }}
+                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold flex items-center justify-center gap-1"
+                title="Reiniciar"
+              >
+                <RotateCcw className="w-4 h-4 text-orange-400" />
+              </button>
+
+              <Link
+                href="/config"
+                className="p-2 rounded-xl bg-slate-800 hover:bg-slate-700 border border-slate-700 text-slate-200 text-xs font-semibold flex items-center justify-center gap-1"
+                title="Configurações"
+              >
+                <Settings className="w-4 h-4" />
+              </Link>
+            </div>
+          </div>
         </div>
       )}
 
-      {/* Container da Urna: 100% Horizontal e Ajustado para 100% da Viewport */}
-      <main className="w-full max-w-[1100px] mx-auto flex-1 flex flex-row items-stretch gap-2 sm:gap-3 md:gap-4 justify-center my-auto min-h-0 overflow-hidden">
-        {/* Lado Esquerdo: Display da Urna */}
+      {/* Container Principal da Urna: RIGOROSAMENTE IDÊNTICO À FOTO 2 (SEM BARRAS EXTRAS) */}
+      <main className="w-full max-w-[1050px] mx-auto h-full flex flex-row items-stretch gap-2.5 sm:gap-3.5 md:gap-4 justify-center overflow-hidden">
+        {/* Lado Esquerdo: Display da Urna (Branco com Cabeçalho e Dados) */}
         <section className="flex-[1.4] sm:flex-[1.3] flex flex-col min-w-0 h-full overflow-hidden" aria-label="Tela de Votação">
           <VotingDisplay
             digits={digits}
@@ -136,10 +173,11 @@ export const VotingMachine: React.FC<VotingMachineProps> = ({
             countdown={countdown}
             onRestart={handleReset}
             showDisclaimer={config.showDisclaimer}
+            onOpenMenu={() => setIsMenuOpen(true)}
           />
         </section>
 
-        {/* Lado Direito: Teclado Numérico da Urna */}
+        {/* Lado Direito: Teclado Numérico da Urna (Grafite Escuro) */}
         <section className="flex-1 sm:flex-[0.9] flex flex-col min-w-0 h-full overflow-hidden" aria-label="Teclado Numérico">
           <NumericKeypad
             onDigit={handleDigit}
@@ -151,11 +189,6 @@ export const VotingMachine: React.FC<VotingMachineProps> = ({
           />
         </section>
       </main>
-
-      {/* Rodapé Obrigatório de Simulação Educativa */}
-      <footer className="h-4 shrink-0 text-center text-[9px] text-slate-500 leading-none select-none flex items-center justify-center">
-        Simulação educativa. Este aplicativo não pertence à Justiça Eleitoral.
-      </footer>
     </div>
   );
 };

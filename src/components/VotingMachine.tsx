@@ -60,13 +60,13 @@ export const VotingMachine: React.FC<VotingMachineProps> = ({
   } = useVotingMachine({ config });
 
   return (
-    <div className="h-[100dvh] max-h-[100dvh] w-screen bg-[#0e131b] text-slate-100 flex flex-col justify-center p-2 sm:p-3 md:p-4 select-none overflow-hidden relative">
+    <div className="h-[100dvh] max-h-[100dvh] w-screen bg-[#0e131b] text-slate-100 flex flex-col items-center justify-center p-1.5 sm:p-3 md:p-5 select-none overflow-hidden relative">
       {/* Alerta quando o celular estiver em pé na vertical */}
       {isPortrait && !dismissRotate && (
         <RotatePhonePrompt onDismiss={() => setDismissRotate(true)} />
       )}
 
-      {/* Menu Modal Discreto acionado pelo botão voltar da Foto 2 */}
+      {/* Menu Modal Discreto acionado pelo botão voltar do display */}
       {isMenuOpen && (
         <div className="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center p-4 animate-fadeIn">
           <div className="bg-slate-900 border border-slate-800 rounded-3xl p-5 max-w-sm w-full shadow-2xl space-y-4">
@@ -158,8 +158,11 @@ export const VotingMachine: React.FC<VotingMachineProps> = ({
         </div>
       )}
 
-      {/* Container Principal da Urna: RIGOROSAMENTE IDÊNTICO À FOTO 2 (SEM BARRAS EXTRAS) */}
-      <main className="w-full max-w-[1050px] mx-auto h-full flex flex-row items-stretch gap-2.5 sm:gap-3.5 md:gap-4 justify-center overflow-hidden">
+      {/* Container Principal da Urna:
+          - No Desktop: max-w-[960px] e max-h-[480px] (proporção realista de urna eletrônica, sem esticar!)
+          - No Celular Horizontal: ocupa 100% da altura visível sem cortar os botões inferiores!
+      */}
+      <main className="w-full max-w-[960px] mx-auto h-full max-h-[460px] sm:max-h-[480px] md:max-h-[510px] flex flex-row items-stretch gap-2 sm:gap-3 md:gap-4 justify-center my-auto overflow-hidden">
         {/* Lado Esquerdo: Display da Urna (Branco com Cabeçalho e Dados) */}
         <section className="flex-[1.4] sm:flex-[1.3] flex flex-col min-w-0 h-full overflow-hidden" aria-label="Tela de Votação">
           <VotingDisplay

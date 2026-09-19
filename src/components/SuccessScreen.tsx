@@ -35,21 +35,21 @@ export const SuccessScreen: React.FC<SuccessScreenProps> = ({ onRestart }) => {
     <div
       onClick={onRestart}
       title="Clique para reiniciar a simulação"
-      className="flex-1 flex flex-col justify-between bg-white rounded-3xl p-4 sm:p-6 md:p-7 shadow-xl select-none h-full border border-slate-100 cursor-pointer animate-fadeIn"
+      className="flex-1 flex flex-col justify-between bg-white rounded-2xl sm:rounded-3xl p-2.5 sm:p-4 md:p-5 shadow-xl select-none h-full min-h-0 border border-slate-100 cursor-pointer animate-fadeIn overflow-hidden"
     >
       {/* Cabeçalho: Data/Hora e Selo Simulador Eleitoral */}
-      <div className="flex items-start justify-between">
-        <span className="font-bold text-slate-400 text-xs sm:text-sm tracking-wide uppercase">
+      <div className="flex items-start justify-between shrink-0">
+        <span className="font-bold text-slate-400 text-[10px] sm:text-xs tracking-wide uppercase">
           {dateTimeStr || "SAB 19/09/2026 13:58:34"}
         </span>
 
-        <div className="flex items-center gap-1.5 text-slate-400">
-          <ShieldCheck className="w-4 h-4 text-slate-400" />
+        <div className="flex items-center gap-1 text-slate-400">
+          <ShieldCheck className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-slate-400" />
           <div className="text-right leading-none">
-            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+            <span className="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
               SIMULADOR
             </span>
-            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block mt-0.5">
+            <span className="text-[8px] sm:text-[9px] font-bold text-slate-400 uppercase tracking-wider block mt-0.5">
               ELEITORAL
             </span>
           </div>
@@ -57,26 +57,26 @@ export const SuccessScreen: React.FC<SuccessScreenProps> = ({ onRestart }) => {
       </div>
 
       {/* Centro: Ícone Verde, FIM e VOTO REGISTRADO */}
-      <div className="flex-1 flex flex-col items-center justify-center my-auto text-center py-6">
+      <div className="flex-1 flex flex-col items-center justify-center my-auto text-center py-2">
         {/* Círculo Verde com Check Branco */}
-        <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20 mb-2">
-          <Check className="w-6 h-6 stroke-[3]" />
+        <div className="w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-md shadow-emerald-500/20 mb-1">
+          <Check className="w-5 h-5 sm:w-6 sm:h-6 stroke-[3]" />
         </div>
 
-        {/* Texto FIM Gigante */}
-        <h1 className="text-6xl sm:text-7xl md:text-8xl font-black text-slate-900 tracking-wider leading-none select-none my-1">
+        {/* Texto FIM */}
+        <h1 className="text-5xl sm:text-6xl md:text-7xl font-black text-slate-900 tracking-wider leading-none select-none my-0.5">
           FIM
         </h1>
 
         {/* Subtítulo VOTO REGISTRADO */}
-        <p className="text-xs sm:text-sm md:text-base font-extrabold uppercase tracking-[0.25em] text-slate-500 select-none mt-1">
+        <p className="text-[11px] sm:text-xs md:text-sm font-extrabold uppercase tracking-[0.2em] text-slate-500 select-none mt-0.5">
           VOTO REGISTRADO
         </p>
       </div>
 
       {/* Rodapé sutil de orientação */}
-      <div className="text-center pt-2">
-        <span className="text-[10px] text-slate-400 font-medium hover:text-slate-600 transition-colors">
+      <div className="text-center pt-1 shrink-0">
+        <span className="text-[9px] sm:text-[10px] text-slate-400 font-medium">
           Toque na tela ou pressione CORRIGE para votar novamente
         </span>
       </div>

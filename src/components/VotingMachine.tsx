@@ -7,7 +7,7 @@ import { DemoMode } from "./DemoMode";
 import { RotatePhonePrompt } from "./RotatePhonePrompt";
 import { useVotingMachine } from "@/hooks/useVotingMachine";
 import { MachineConfig } from "@/data/candidates";
-import { Volume2, VolumeX, Settings, Maximize2, Minimize2 } from "lucide-react";
+import { Volume2, VolumeX, Settings } from "lucide-react";
 import Link from "next/link";
 
 interface VotingMachineProps {
@@ -23,7 +23,7 @@ export const VotingMachine: React.FC<VotingMachineProps> = ({
   const [dismissRotate, setDismissRotate] = useState(false);
   const [showControls, setShowControls] = useState(false);
 
-  // Detecção de orientação em smartphones
+  // Detecção de orientação do celular
   useEffect(() => {
     const handleOrientation = () => {
       if (typeof window !== "undefined") {
@@ -61,36 +61,34 @@ export const VotingMachine: React.FC<VotingMachineProps> = ({
   } = useVotingMachine({ config });
 
   return (
-    <div className="min-h-screen bg-[#0b0f17] text-slate-100 flex flex-col items-center justify-center p-2 sm:p-4 md:p-6 select-none overflow-hidden relative">
-      {/* Alerta para girar smartphone na horizontal se estiver em modo retrato */}
+    <div className="h-[100dvh] max-h-[100dvh] w-screen bg-[#0b0f17] text-slate-100 flex flex-col justify-between p-1.5 sm:p-2 md:p-3 select-none overflow-hidden relative">
+      {/* Alerta quando o celular estiver em pé na vertical */}
       {isPortrait && !dismissRotate && (
         <RotatePhonePrompt onDismiss={() => setDismissRotate(true)} />
       )}
 
-      {/* Barra de Controles Discretos no Topo */}
-      <header className="w-full max-w-[1100px] mb-2 px-2 flex items-center justify-between text-xs">
-        <div className="flex items-center gap-2">
-          <span className="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
-          <span className="text-[11px] font-bold text-slate-400 tracking-wider uppercase">
-            Simulador Urna Eletrônica 2026
+      {/* Barra de Controles Discreta no Topo (Compacta para não roubar altura) */}
+      <header className="w-full max-w-[1100px] mx-auto h-6 sm:h-7 shrink-0 flex items-center justify-between px-1 text-xs">
+        <div className="flex items-center gap-1.5">
+          <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse"></span>
+          <span className="text-[10px] font-bold text-slate-400 tracking-wider uppercase truncate">
+            Simulador Urna 2026
           </span>
         </div>
 
-        <div className="flex items-center gap-1.5 sm:gap-2">
-          {/* Alternar barra de demonstração */}
+        <div className="flex items-center gap-1.5">
           <button
             type="button"
             onClick={() => setShowControls((prev) => !prev)}
-            className="px-2.5 py-1 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 text-[11px] font-semibold border border-slate-700/60 transition-all"
+            className="px-2 py-0.5 rounded-md bg-slate-800/90 hover:bg-slate-700 text-slate-300 text-[10px] sm:text-[11px] font-semibold border border-slate-700/60 transition-all"
           >
             {showControls ? "Ocultar Demo" : "▶ Modo Demo"}
           </button>
 
-          {/* Toggle de Som */}
           <button
             type="button"
             onClick={() => onUpdateConfig({ soundEnabled: !config.soundEnabled })}
-            className="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 transition-all"
+            className="p-1 rounded-md bg-slate-800/90 hover:bg-slate-700 text-slate-300 border border-slate-700/60 transition-all"
             title={config.soundEnabled ? "Som Ligado" : "Som Desligado"}
           >
             {config.soundEnabled ? (
@@ -100,10 +98,9 @@ export const VotingMachine: React.FC<VotingMachineProps> = ({
             )}
           </button>
 
-          {/* Link para Configurações */}
           <Link
             href="/config"
-            className="p-1.5 rounded-lg bg-slate-800/80 hover:bg-slate-700 text-slate-300 border border-slate-700/60 transition-all"
+            className="p-1 rounded-md bg-slate-800/90 hover:bg-slate-700 text-slate-300 border border-slate-700/60 transition-all"
             title="Configurações"
           >
             <Settings className="w-3.5 h-3.5" />
@@ -111,9 +108,9 @@ export const VotingMachine: React.FC<VotingMachineProps> = ({
         </div>
       </header>
 
-      {/* Painel de Demonstração quando ativado */}
+      {/* Painel de Demonstração quando aberto */}
       {showControls && (
-        <div className="w-full max-w-[1100px] mb-2 animate-fadeIn">
+        <div className="w-full max-w-[1100px] mx-auto mb-1 shrink-0 animate-fadeIn">
           <DemoMode
             isRunning={isDemoRunning}
             onStart={startDemo}
@@ -124,10 +121,10 @@ export const VotingMachine: React.FC<VotingMachineProps> = ({
         </div>
       )}
 
-      {/* Container Principal da Urna: RIGOROSAMENTE HORIZONTAL (Lado a Lado) */}
-      <main className="w-full max-w-[1100px] flex-1 max-h-[580px] sm:max-h-[620px] flex flex-row items-stretch gap-2.5 sm:gap-4 md:gap-5 justify-center">
-        {/* Lado Esquerdo: Display da Urna (Branco com Cabeçalho e Dados) */}
-        <section className="flex-[1.4] sm:flex-[1.3] flex flex-col min-w-0" aria-label="Tela de Votação">
+      {/* Container da Urna: 100% Horizontal e Ajustado para 100% da Viewport */}
+      <main className="w-full max-w-[1100px] mx-auto flex-1 flex flex-row items-stretch gap-2 sm:gap-3 md:gap-4 justify-center my-auto min-h-0 overflow-hidden">
+        {/* Lado Esquerdo: Display da Urna */}
+        <section className="flex-[1.4] sm:flex-[1.3] flex flex-col min-w-0 h-full overflow-hidden" aria-label="Tela de Votação">
           <VotingDisplay
             digits={digits}
             isCompleted={isCompleted}
@@ -142,8 +139,8 @@ export const VotingMachine: React.FC<VotingMachineProps> = ({
           />
         </section>
 
-        {/* Lado Direito: Teclado Numérico da Urna (Grafite Escuro) */}
-        <section className="flex-1 sm:flex-[0.9] flex flex-col min-w-0" aria-label="Teclado Numérico">
+        {/* Lado Direito: Teclado Numérico da Urna */}
+        <section className="flex-1 sm:flex-[0.9] flex flex-col min-w-0 h-full overflow-hidden" aria-label="Teclado Numérico">
           <NumericKeypad
             onDigit={handleDigit}
             onCorrige={handleCorrige}
@@ -156,7 +153,7 @@ export const VotingMachine: React.FC<VotingMachineProps> = ({
       </main>
 
       {/* Rodapé Obrigatório de Simulação Educativa */}
-      <footer className="mt-2 text-center text-[10px] text-slate-500 select-none">
+      <footer className="h-4 shrink-0 text-center text-[9px] text-slate-500 leading-none select-none flex items-center justify-center">
         Simulação educativa. Este aplicativo não pertence à Justiça Eleitoral.
       </footer>
     </div>

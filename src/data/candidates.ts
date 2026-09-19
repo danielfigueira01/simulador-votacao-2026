@@ -3,17 +3,19 @@ export interface Candidate {
   name: string;
   office: string;
   partyName?: string;
+  location?: string;
   image: string;
   instructions?: string;
 }
 
 export const DEFAULT_CANDIDATE: Candidate = {
   number: "22444",
-  name: "Dr. Rodrigo Ascoly",
+  name: "RODRIGO ASCOLY",
   office: "Deputado Estadual",
-  partyName: "",
+  partyName: "Partido PL",
+  location: "Rio de Janeiro · RJ",
   image: "/rodrigo-ascoly.png",
-  instructions: "Aperte a tecla: VERDE para CONFIRMAR, LARANJA para CORRIGIR",
+  instructions: "Pressione CONFIRMA para registrar ou CORRIGE para reiniciar",
 };
 
 export interface MachineConfig {

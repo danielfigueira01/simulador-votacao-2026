@@ -6,7 +6,6 @@ import { User } from "lucide-react";
 
 interface CandidateCardProps {
   candidate: Candidate;
-  isConfirmed?: boolean;
 }
 
 export const CandidateCard: React.FC<CandidateCardProps> = ({ candidate }) => {
@@ -19,10 +18,16 @@ export const CandidateCard: React.FC<CandidateCardProps> = ({ candidate }) => {
       ? `${basePath}${candidate.image}`
       : candidate.image;
 
+  // Extrai nome do partido ou sigla (ex: "Partido PL" -> "Partido" e "PL")
+  const partyText = candidate.partyName || "Partido PL";
+  const partyParts = partyText.split(" ");
+  const partyPrefix = partyParts.length > 1 ? partyParts.slice(0, -1).join(" ") : "Partido";
+  const partyBadge = partyParts.length > 1 ? partyParts[partyParts.length - 1] : partyText;
+
   return (
-    <div className="flex flex-row items-center gap-3.5 sm:gap-5 bg-slate-50 border border-slate-200/90 rounded-xl p-3 sm:p-4 shadow-sm">
-      {/* Container da Fotografia */}
-      <div className="relative w-24 h-32 sm:w-28 sm:h-36 md:w-32 md:h-40 shrink-0 rounded-lg overflow-hidden border-2 border-slate-300 bg-slate-100 flex items-center justify-center shadow-inner">
+    <div className="bg-white rounded-2xl border border-slate-100/90 shadow-[0_4px_20px_rgba(0,0,0,0.06)] p-2.5 sm:p-3 flex items-center gap-3.5 max-w-[340px] animate-fadeIn">
+      {/* Fotografia do Candidato */}
+      <div className="relative w-14 h-16 sm:w-16 sm:h-18 rounded-xl overflow-hidden border border-slate-200 bg-slate-100 shrink-0 shadow-sm">
         {!imgError && resolvedImage ? (
           /* eslint-disable-next-line @next/next/no-img-element */
           <img
@@ -32,42 +37,27 @@ export const CandidateCard: React.FC<CandidateCardProps> = ({ candidate }) => {
             onError={() => setImgError(true)}
           />
         ) : (
-          <div className="w-full h-full flex flex-col items-center justify-center p-3 text-center bg-slate-200/70 text-slate-600">
-            <User className="w-12 h-12 text-slate-400 mb-1" />
-            <span className="text-[11px] font-bold tracking-wider uppercase text-slate-600 leading-tight">
-              FOTO DO CANDIDATO
+          <div className="w-full h-full flex flex-col items-center justify-center p-1 text-center bg-slate-100 text-slate-500">
+            <User className="w-8 h-8 text-slate-400" />
+            <span className="text-[9px] font-bold uppercase tracking-tighter text-slate-500 leading-none mt-1">
+              FOTO
             </span>
           </div>
         )}
       </div>
 
-      {/* Informações Textuais e Número em Alto Destaque */}
-      <div className="flex-1 flex flex-col justify-between text-left">
-        <div>
-          <div className="inline-block px-2.5 py-0.5 rounded text-xs font-semibold uppercase tracking-wider bg-slate-200 text-slate-700 mb-1.5">
-            {candidate.office}
-          </div>
-
-          <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight leading-snug">
-            {candidate.name}
-          </h2>
-
-          {candidate.partyName && (
-            <p className="text-sm font-medium text-slate-600 mt-0.5">
-              {candidate.partyName}
-            </p>
-          )}
-        </div>
-
-        {/* Número do Candidato em Destaque Absoluto */}
-        <div className="mt-3 pt-3 border-t border-slate-200/80 flex items-baseline gap-2">
-          <span className="text-xs font-bold text-slate-500 uppercase tracking-wider">
-            Número:
-          </span>
-          <span className="text-3xl sm:text-4xl font-extrabold text-slate-950 font-mono tracking-widest">
-            {candidate.number}
-          </span>
-        </div>
+      {/* Textos de Identificação */}
+      <div className="flex flex-col justify-center text-left">
+        <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400 leading-none mb-1">
+          CANDIDATO
+        </span>
+        <h3 className="text-base sm:text-lg font-black text-slate-900 tracking-tight leading-tight uppercase">
+          {candidate.name}
+        </h3>
+        <p className="text-xs text-slate-500 font-medium mt-0.5">
+          {partyPrefix}{" "}
+          <span className="text-blue-600 font-bold">{partyBadge}</span>
+        </p>
       </div>
     </div>
   );

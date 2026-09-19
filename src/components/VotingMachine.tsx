@@ -60,7 +60,7 @@ export const VotingMachine: React.FC<VotingMachineProps> = ({
   } = useVotingMachine({ config });
 
   return (
-    <div className="h-[100dvh] max-h-[100dvh] w-screen bg-[#0e131b] text-slate-100 flex flex-col items-center justify-center p-1.5 sm:p-3 md:p-5 select-none overflow-hidden relative">
+    <div className="h-[100dvh] max-h-[100dvh] w-screen bg-[#0e131b] text-slate-100 flex flex-col items-center justify-center p-1 sm:p-3 md:p-5 select-none overflow-hidden relative">
       {/* Alerta quando o celular estiver em pé na vertical */}
       {isPortrait && !dismissRotate && (
         <RotatePhonePrompt onDismiss={() => setDismissRotate(true)} />

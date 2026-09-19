@@ -1,54 +1,84 @@
 "use client";
 
-import React from "react";
-import { RotateCcw, CheckCircle2, ShieldAlert } from "lucide-react";
+import React, { useState, useEffect } from "react";
+import { Check, ShieldCheck } from "lucide-react";
 
 interface SuccessScreenProps {
   onRestart: () => void;
   countdown: number | null;
 }
 
-export const SuccessScreen: React.FC<SuccessScreenProps> = ({ onRestart, countdown }) => {
+export const SuccessScreen: React.FC<SuccessScreenProps> = ({ onRestart }) => {
+  const [dateTimeStr, setDateTimeStr] = useState<string>("");
+
+  useEffect(() => {
+    const updateDateTime = () => {
+      const now = new Date();
+      const days = ["DOM", "SEG", "TER", "QUA", "QUI", "SEX", "SAB"];
+      const dayName = days[now.getDay()];
+      const day = String(now.getDate()).padStart(2, "0");
+      const month = String(now.getMonth() + 1).padStart(2, "0");
+      const year = now.getFullYear();
+      const hours = String(now.getHours()).padStart(2, "0");
+      const minutes = String(now.getMinutes()).padStart(2, "0");
+      const seconds = String(now.getSeconds()).padStart(2, "0");
+
+      setDateTimeStr(`${dayName} ${day}/${month}/${year} ${hours}:${minutes}:${seconds}`);
+    };
+
+    updateDateTime();
+    const interval = setInterval(updateDateTime, 1000);
+    return () => clearInterval(interval);
+  }, []);
+
   return (
-    <div className="flex-1 flex flex-col items-center justify-center p-4 sm:p-6 text-center bg-white rounded-3xl h-full select-none animate-fadeIn">
-      {/* Ícone de Sucesso */}
-      <div className="w-14 h-14 sm:w-16 sm:h-16 rounded-full bg-emerald-50 text-emerald-600 flex items-center justify-center mb-3 shadow-sm ring-4 ring-emerald-100/50">
-        <CheckCircle2 className="w-9 h-9 sm:w-10 sm:h-10" />
+    <div
+      onClick={onRestart}
+      title="Clique para reiniciar a simulação"
+      className="flex-1 flex flex-col justify-between bg-white rounded-3xl p-4 sm:p-6 md:p-7 shadow-xl select-none h-full border border-slate-100 cursor-pointer animate-fadeIn"
+    >
+      {/* Cabeçalho: Data/Hora e Selo Simulador Eleitoral */}
+      <div className="flex items-start justify-between">
+        <span className="font-bold text-slate-400 text-xs sm:text-sm tracking-wide uppercase">
+          {dateTimeStr || "SAB 19/09/2026 13:58:34"}
+        </span>
+
+        <div className="flex items-center gap-1.5 text-slate-400">
+          <ShieldCheck className="w-4 h-4 text-slate-400" />
+          <div className="text-right leading-none">
+            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block">
+              SIMULADOR
+            </span>
+            <span className="text-[9px] font-bold text-slate-400 uppercase tracking-wider block mt-0.5">
+              ELEITORAL
+            </span>
+          </div>
+        </div>
       </div>
 
-      {/* Título Principal */}
-      <h2 className="text-xl sm:text-2xl font-black text-slate-900 tracking-tight mb-1">
-        VOTO REGISTRADO NA SIMULAÇÃO
-      </h2>
+      {/* Centro: Ícone Verde, FIM e VOTO REGISTRADO */}
+      <div className="flex-1 flex flex-col items-center justify-center my-auto text-center py-6">
+        {/* Círculo Verde com Check Branco */}
+        <div className="w-11 h-11 sm:w-12 sm:h-12 rounded-full bg-emerald-500 text-white flex items-center justify-center shadow-lg shadow-emerald-500/20 mb-2">
+          <Check className="w-6 h-6 stroke-[3]" />
+        </div>
 
-      {/* Subtítulo */}
-      <p className="text-xs sm:text-sm font-medium text-slate-500 max-w-sm mb-4 leading-relaxed">
-        Esta é apenas uma demonstração educativa.
-      </p>
+        {/* Texto FIM Gigante */}
+        <h1 className="text-6xl sm:text-7xl md:text-8xl font-black text-slate-900 tracking-wider leading-none select-none my-1">
+          FIM
+        </h1>
 
-      {/* Aviso de Não-Oficialidade */}
-      <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-lg bg-amber-50 border border-amber-200/80 text-amber-800 text-[11px] font-semibold mb-5">
-        <ShieldAlert className="w-3.5 h-3.5 text-amber-600 shrink-0" />
-        <span>Simulação educativa • Não pertence à Justiça Eleitoral</span>
+        {/* Subtítulo VOTO REGISTRADO */}
+        <p className="text-xs sm:text-sm md:text-base font-extrabold uppercase tracking-[0.25em] text-slate-500 select-none mt-1">
+          VOTO REGISTRADO
+        </p>
       </div>
 
-      {/* Botão de Reinício */}
-      <div className="flex flex-col items-center gap-2">
-        <button
-          onClick={onRestart}
-          type="button"
-          className="inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-xl bg-slate-900 hover:bg-slate-800 active:scale-95 text-white font-bold text-xs sm:text-sm shadow-md transition-all focus:outline-none"
-          aria-label="Reiniciar simulação de votação"
-        >
-          <RotateCcw className="w-4 h-4 text-emerald-400" />
-          <span>REINICIAR SIMULAÇÃO</span>
-        </button>
-
-        {countdown !== null && countdown > 0 && (
-          <p className="text-[11px] font-medium text-slate-400 animate-pulse">
-            Reinício automático em {countdown}s...
-          </p>
-        )}
+      {/* Rodapé sutil de orientação */}
+      <div className="text-center pt-2">
+        <span className="text-[10px] text-slate-400 font-medium hover:text-slate-600 transition-colors">
+          Toque na tela ou pressione CORRIGE para votar novamente
+        </span>
       </div>
     </div>
   );
